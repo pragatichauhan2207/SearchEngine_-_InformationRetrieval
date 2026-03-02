@@ -1,6 +1,6 @@
 # SearchEngine_&_InformationRetrieval
 
-## Topic -- Web Page Scraper
+## Topic : Web Page Scraper
 
 This project scrapes a web page using web scraping techniques and extracts useful information from a given URL.
 
