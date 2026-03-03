@@ -1,33 +1,42 @@
+import sys
 from bs4 import BeautifulSoup
-import requests 
-import sys 
-import re
-
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
 
 
 def main():
-    arg_len = len(sys.argv)
-    if (arg_len != 2):
-        print("Kindly Enter the url first")
+
+    if len(sys.argv) != 2:
+        print("Kindly enter a valid URL first")
         sys.exit(1)
-        
-# Taking URL from command line
+
     url = sys.argv[1].strip()
-    print("Your entered url is: " ,url)
 
+    if not url.startswith("http"):
+        url = "https://" + url
 
-    # get_response = requests.get(url)
-    # print(get_response.text)
-
- # fetching the webpage
-    try:
-        get_response = requests.get(url)
-    except:
-        print("Error in fetching this URL:", url)
-        return None
+    print("Your entered url is:", url)
     
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
 
-    soup = BeautifulSoup(get_response.text,"html.parser")
+
+    try:
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.get(url)
+
+        time.sleep(10)
+
+        html = driver.page_source
+        driver.quit()
+
+    except Exception as e:
+        print("Couldn't fetch the page:", e)
+        return
+    
+    soup = BeautifulSoup(html, "html.parser")
+    # soup = BeautifulSoup(get_response.text,"html.parser")
 
     
     if(soup.title and soup.title.text):
@@ -49,16 +58,12 @@ def main():
 
 
     print("\n")
-
-# Storing unique links using set
     links_set =set()
     links = soup.find_all("a")      #BeautifulSoup tag object
     for link in links:
         href = link.get("href")
         if href is not None:
             links_set.add(href)
-
-# Printing all links
     
     print("Set of unique links is:")
     # Print all the links
@@ -67,8 +72,10 @@ def main():
 
 
 
-    
 
 
 if __name__ == "__main__":
     main()
+
+
+    
